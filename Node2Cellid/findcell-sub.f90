@@ -11,16 +11,19 @@ subroutine findcell(k,i,j,nlay,nrow,ncol,node)
 ! ******************************************************************
 !
   implicit none
-  integer, intent(in) :: ncol, nlay, nrow
-  integer, intent(inout) :: i, j, k, node
+  integer, intent(in) :: ncol, nlay, nrow, node
+  integer, intent(inout) :: i, j, k
   integer :: nplay, nodes, n
   nplay=nrow*ncol
   nodes=nplay*nlay
 !
-  if (node.le.0 .or. node.gt.nodes) then
+  if (node == 0) then
     k = 0
     i = 0
     j = 0
+  elseif (node < 0 .or. node > nodes) then
+    write(*,'(a,i0)')'NODE value invalid in findcell: ', node
+    stop
   else
     k=(node-1)/nplay+1
     n=node-(k-1)*nplay
