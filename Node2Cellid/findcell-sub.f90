@@ -1,13 +1,13 @@
 module subs
   use SimModule, only: store_error, ustop
   private
-  public :: findcell, urword, same_word
+  public :: findcell, findcellv, urword, same_word
 contains
   
 subroutine findcell(k,i,j,nlay,nrow,ncol,node)
 ! ******************************************************************
 !   Return layer (k), row (i), and column (j) that correspond to a
-!   node number
+!   node number for a 3D grid
 ! ******************************************************************
 !
   implicit none
@@ -33,6 +33,33 @@ subroutine findcell(k,i,j,nlay,nrow,ncol,node)
 !
   return
 end subroutine findcell
+  
+subroutine findcellv(k,i,nlay,ncpl,node)
+! ******************************************************************
+!   Return layer (k) and cell number (j) that correspond to a
+!   node number for a DISV grid
+! ******************************************************************
+!
+  implicit none
+  integer, intent(in) :: ncpl, nlay, node
+  integer, intent(inout) :: i, k
+  integer :: nplay, nodes
+  nplay=ncpl
+  nodes=nplay*nlay
+!
+  if (node == 0) then
+    k = 0
+    i = 0
+  elseif (node < 0 .or. node > nodes) then
+    write(*,'(a,i0)')'NODE value invalid in findcell: ', node
+    stop
+  else
+    k = (node-1)/nplay+1
+    i = node-(k-1)*nplay
+  endif
+!
+  return
+end subroutine findcellv
 
 
       SUBROUTINE URWORD(LINE,ICOL,ISTART,ISTOP,NCODE,N,R,IOUT,IN)
