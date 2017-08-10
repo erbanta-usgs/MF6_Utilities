@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="BsvReader" />
+		<Option makefile="makefile" />
+		<Option makefile_is_custom="1" />
+		<Option execution_dir="." />
+		<Option pch_mode="2" />
+		<Option compiler="gfortran" />
+		<Build>
+			<Target title="Debug">
+				<Option output="Debug/bin/BsvReader" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gfortran" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<ExtraCommands>
+					<Add before="pre-build.bat" />
+				</ExtraCommands>
+				<MakeCommands>
+					<Build command="gnumake -f $makefile " />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="clean.bat" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make -q -f $makefile" />
+					<SilentBuild command="gnumake -f $makefile  &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/BsvReader" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gfortran" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+				<ExtraCommands>
+					<Add before="pre-build.bat" />
+				</ExtraCommands>
+				<MakeCommands>
+					<Build command="gnumake -f $makefile" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="gnumake -f $makefile &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="../src/BsvReader.f90" />
+		<Unit filename="../src/Utilities/ArrayHandlers.f90" />
+		<Unit filename="../src/Utilities/Constants.f90" />
+		<Unit filename="../src/Utilities/InputOutput.f90" />
+		<Unit filename="../src/Utilities/List.f90" />
+		<Unit filename="../src/Utilities/Observation/ObsOutput.f90" />
+		<Unit filename="../src/Utilities/OpenSpec.f90" />
+		<Unit filename="../src/Utilities/Sim.f90" />
+		<Unit filename="../src/Utilities/SimVariables.f90" />
+		<Unit filename="../src/Utilities/kind.f90" />
+		<Unit filename="../src/readers.f90" />
+		<Unit filename="makefile" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

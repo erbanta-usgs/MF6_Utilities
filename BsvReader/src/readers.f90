@@ -1,19 +1,78 @@
 module readers
   implicit none  
   private
-  public :: readsngl, readcont, lenobsnamebsv
-  integer :: lenobsnamebsv
+  public :: readsngl, readcont, read_header, obstype
+  
+  integer :: iprecision, lenobsnamebsv, nobs
+  character(len=100) :: text1 = '', word
+  character(len=100), allocatable, dimension(:) :: obsnames
+  character(len=4) :: obstype, cvar
+
   
 contains
   
-subroutine readsngl(iin,iout,iprecision,ierr)
+subroutine read_header(iin, iout)
+  ! dummy
+  integer, intent(in) :: iin, iout
+  ! local
+  integer :: istat
+  !
+  ! -- read the first 100 bytes and get observation type and precision
+  read(iin,err=900,end=900)text1
+  !
+  ! OBSTYPE (either 'sngl' or 'cont') is in bytes 1-4
+  obstype = text1(1:4)
+  if (obstype .ne. 'sngl' .and. obstype .ne. 'cont') then
+    write(*,*)'Error: invalid observation type: "' // obstype // '"'
+    goto 900
+  endif
+  !
+  ! Precision indicator (either 'single' or 'double') is in bytes 6-11
+  word = text1(6:11)
+  if (word=='single') then
+    iprecision = 1
+  elseif (word=='double') then
+    iprecision = 2
+  else
+    write(*,*)'Error: invalid precision: "' // trim(word) // '"'
+    goto 900
+  endif
+  !
+  ! Get LENOBSNAME from bytes 12-15 (no longer allow field to be blank)
+  cvar = text1(12:15)
+  if (cvar == '') then
+    write(*,*)'Error: LENOBSNAME not found in BSV header.'
+  else
+    read(cvar,'(i4)',iostat=istat)lenobsnamebsv
+    if (istat /= 0) then
+      write(*,*)'Error reading LENOBSNAME from header.'
+      goto 900
+    elseif (lenobsnamebsv < 1) then
+      write(*,*)'Error: LENOBSNAME value read from header is invalid.'
+      goto 900
+    endif
+  endif
+  !
+  !
+  goto 1000
+900 continue
+  write(*,*)'Error encountered.'
+  write(*,*)''
+  stop
+1000 continue
+  close(iin)
+  close(iout)
+  return
+end subroutine read_header
+  
+subroutine readsngl(iin,iout,ierr)
   ! Read single observations
   !   real32 specifies 32-bit real = 4 bytes = single precision.
   !   real64 specifies 64-bit real = 8 bytes = double precision.
   use iso_fortran_env, only: real32, real64
   implicit none
   ! -- dummy arguments
-  integer, intent(in) :: iin,iout,iprecision
+  integer, intent(in) :: iin,iout
   integer, intent(out) :: ierr
   ! -- local variables
   integer, parameter :: OBSNAMEMAXSIZE=100
@@ -29,6 +88,7 @@ subroutine readsngl(iin,iout,iprecision,ierr)
   !
   ierr = 0
   k = 0
+  kerr = 0
   do
     ! -- Read observation name
     !read(iin,end=1000,err=900)obsname
@@ -58,14 +118,14 @@ subroutine readsngl(iin,iout,iprecision,ierr)
   return
 end subroutine readsngl
   
-subroutine readcont(iin,iout,iprecision,ierr)
+subroutine readcont(iin,iout,ierr)
   ! Read continuous observations
   !   real32 specifies 32-bit real = 4 bytes = single precision.
   !   real64 specifies 64-bit real = 8 bytes = double precision.
   use iso_fortran_env, only: int32, real32, real64
   implicit none
   ! -- dummy arguments
-  integer, intent(in) :: iin,iout,iprecision
+  integer, intent(in) :: iin,iout
   integer, intent(out) :: ierr
   ! -- local variables
   integer, parameter :: OBSNAMEMAXSIZE = 100

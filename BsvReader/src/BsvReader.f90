@@ -3,13 +3,11 @@ program bsvreader
   use ConstantsModule, only: LENOBSNAME
   use OpenSpecModule, only: access, form, action
   use InputOutputModule, only: urword
-  use readers, only: readsngl, readcont, lenobsnamebsv
+  use readers, only: readsngl, readcont, read_header, obstype
   implicit none
-  integer :: icol, ierr=0, iin=7, iout=8, iprecision, istart, istat, &
+  integer :: icol, ierr=0, iin=7, iout=8, istart, istat, &
              istop, nc, n
   double precision :: r
-  character(len=4) :: obstype, cvar
-  character(len=100) :: text1 = '', word
   character(len=200) :: filname = '', outfile
   logical :: lex
   ! -- formats
@@ -38,47 +36,51 @@ program bsvreader
   outfile = trim(filname)//'.csv'
   open(iout,file=outfile)
   !
-  ! -- read the first 100 bytes and get observation type and precision
-  read(iin,err=900,end=900)text1
-  icol = 1
-  call urword(text1,icol,istart,istop,0,n,r,iout,iin)
-  obstype = text1(istart:istop)
-  if (obstype .ne. 'sngl' .and. obstype .ne. 'cont') then
-    write(*,*)'Error: invalid observation type.'
-    goto 900
-  endif
-  call urword(text1,icol,istart,istop,0,n,r,iout,iin)
-  word = text1(istart:istop)
-  if (word=='single') then
-    iprecision = 1
-  elseif (word=='double') then
-    iprecision = 2
-  else
-    write(*,*)'Error: invalid precision.'
-    goto 900
-  endif
+  ! Read the header
+  call read_header(iin, iout)
   !
-  ! Get LENOBSNAME from bytes 12-15 (allow field to be blank)
-  cvar = text1(12:15)
-  if (cvar == '') then
-    ! Use default
-    lenobsnamebsv = LENOBSNAME
-  else
-    read(cvar,'(i4)',iostat=istat)lenobsnamebsv
-    if (istat /= 0) then
-      write(*,*)'Error reading LENOBSNAME from header.'
-      goto 900
-    elseif (lenobsnamebsv < 1) then
-      write(*,*)'Error: LENOBSNAME value read from header is invalid.'
-      goto 900
-    endif
-  endif
+  !! -- read the first 100 bytes and get observation type and precision
+  !read(iin,err=900,end=900)text1
+  !icol = 1
+  !call urword(text1,icol,istart,istop,0,n,r,iout,iin)
+  !! OBSTYPE (either 'sngl' or 'cont') is in bytes 1-4
+  !obstype = text1(1:4)
+  !if (obstype .ne. 'sngl' .and. obstype .ne. 'cont') then
+  !  write(*,*)'Error: invalid observation type: "' // obstype // '"'
+  !  goto 900
+  !endif
+  !call urword(text1,icol,istart,istop,0,n,r,iout,iin)
+  !! Precision indicator is in bytes 6-11
+  !word = text1(6:11)
+  !if (word=='single ') then
+  !  iprecision = 1
+  !elseif (word=='double') then
+  !  iprecision = 2
+  !else
+  !  write(*,*)'Error: invalid precision: "' // trim(word) // '"'
+  !  goto 900
+  !endif
+  !!
+  !! Get LENOBSNAME from bytes 12-15 (no longer allow field to be blank)
+  !cvar = text1(12:15)
+  !if (cvar == '') then
+  !  write(*,*)'Error: LENOBSNAME not found in BSV header.'
+  !else
+  !  read(cvar,'(i4)',iostat=istat)lenobsnamebsv
+  !  if (istat /= 0) then
+  !    write(*,*)'Error reading LENOBSNAME from header.'
+  !    goto 900
+  !  elseif (lenobsnamebsv < 1) then
+  !    write(*,*)'Error: LENOBSNAME value read from header is invalid.'
+  !    goto 900
+  !  endif
+  !endif
   !
   ! -- read remaining data for either single or continuous observations
   if (obstype=='sngl') then
-    call readsngl(iin,iout,iprecision,ierr)
+    call readsngl(iin,iout,ierr)
   elseif (obstype=='cont') then
-    call readcont(iin,iout,iprecision,ierr)
+    call readcont(iin,iout,ierr)
   endif
   if (ierr.ne.0) goto 900
   write(*,10)trim(outfile)
