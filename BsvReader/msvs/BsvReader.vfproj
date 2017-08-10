@@ -30,15 +30,15 @@
 		<Filter Name="src">
 		<Filter Name="Utilities">
 		<Filter Name="Observation">
-		<File RelativePath=".\src\Utilities\Observation\ObsOutput.f90"/></Filter>
-		<File RelativePath=".\src\Utilities\ArrayHandlers.f90"/>
-		<File RelativePath=".\src\Utilities\Constants.f90"/>
-		<File RelativePath=".\src\Utilities\InputOutput.f90"/>
-		<File RelativePath=".\src\Utilities\kind.f90"/>
-		<File RelativePath=".\src\Utilities\List.f90"/>
-		<File RelativePath=".\src\Utilities\OpenSpec.f90"/>
-		<File RelativePath=".\src\Utilities\Sim.f90"/>
-		<File RelativePath=".\src\Utilities\SimVariables.f90"/></Filter></Filter>
-		<File RelativePath=".\src\BsvReader.f90"/>
-		<File RelativePath=".\src\readers.f90"/></Filter></Files>
+		<File RelativePath="..\src\Utilities\Observation\ObsOutput.f90"/></Filter>
+		<File RelativePath="..\src\Utilities\ArrayHandlers.f90"/>
+		<File RelativePath="..\src\Utilities\Constants.f90"/>
+		<File RelativePath="..\src\Utilities\InputOutput.f90"/>
+		<File RelativePath="..\src\Utilities\kind.f90"/>
+		<File RelativePath="..\src\Utilities\List.f90"/>
+		<File RelativePath="..\src\Utilities\OpenSpec.f90"/>
+		<File RelativePath="..\src\Utilities\Sim.f90"/>
+		<File RelativePath="..\src\Utilities\SimVariables.f90"/></Filter>
+		<File RelativePath="..\src\BsvReader.f90"/>
+		<File RelativePath="..\src\readers.f90"/></Filter></Filter></Files>
 	<Globals/></VisualStudioProject>
