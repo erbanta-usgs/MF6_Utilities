@@ -1,0 +1,7 @@
+*.suo
+*.obj
+*.exe
+*.manifest
+*.pdb
+BuildLog.htm
+*.mod
